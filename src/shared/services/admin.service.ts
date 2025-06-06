@@ -27,6 +27,8 @@ export class AdminService {
       throw new Error('Only admins can review doctor applications');
     }
     console.log(currentUser)
+    console.log(action)
+    console.log(doctorId )
     return this.http.post(`${this.apiUrl}/admin/review-doctor/${doctorId}`, {
       admin_id: currentUser._id, // Get from authenticated user
       action: action

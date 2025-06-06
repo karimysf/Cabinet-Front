@@ -161,18 +161,38 @@ import { Patient, Doctor } from '../../shared/models/user.model';
                 name="specialty" 
                 required>
                 <option value="">Select your specialty</option>
-                <option value="Cardiology">Cardiology</option>
-                <option value="Dermatology">Dermatology</option>
-                <option value="Neurology">Neurology</option>
-                <option value="Pediatrics">Pediatrics</option>
-                <option value="Orthopedics">Orthopedics</option>
-                <option value="General Practice">General Practice</option>
-                <option value="Internal Medicine">Internal Medicine</option>
-                <option value="Surgery">Surgery</option>
-                <option value="Psychiatry">Psychiatry</option>
-                <option value="Radiology">Radiology</option>
-                <option value="Anesthesiology">Anesthesiology</option>
-                <option value="Emergency Medicine">Emergency Medicine</option>
+               <option value="Généraliste">Généraliste</option>
+<option value="Cardiologue">Cardiologue</option>
+<option value="Pneumologue">Pneumologue</option>
+<option value="Dermatologue">Dermatologue</option>
+<option value="Pédiatre">Pédiatre</option>
+<option value="Neurologue">Neurologue</option>
+<option value="Gastro-entérologue">Gastro-entérologue</option>
+<option value="Endocrinologue">Endocrinologue</option>
+<option value="Rhumatologue">Rhumatologue</option>
+<option value="Ophtalmologue">Ophtalmologue</option>
+<option value="ORL">ORL</option>
+<option value="Gynécologue">Gynécologue</option>
+<option value="Urologue">Urologue</option>
+<option value="Néphrologue">Néphrologue</option>
+<option value="Oncologue">Oncologue</option>
+<option value="Hématologue">Hématologue</option>
+<option value="Chirurgien général">Chirurgien général</option>
+<option value="Chirurgien orthopédiste">Chirurgien orthopédiste</option>
+<option value="Chirurgien cardiaque">Chirurgien cardiaque</option>
+<option value="Chirurgien plastique">Chirurgien plastique</option>
+<option value="Radiologue">Radiologue</option>
+<option value="Anesthésiste">Anesthésiste</option>
+<option value="Médecin du sport">Médecin du sport</option>
+<option value="Médecin du travail">Médecin du travail</option>
+<option value="Psychiatre">Psychiatre</option>
+<option value="Psychologue">Psychologue</option>
+<option value="Médecin urgentiste">Médecin urgentiste</option>
+<option value="Allergologue">Allergologue</option>
+<option value="Infectiologue">Infectiologue</option>
+<option value="Médecin interne">Médecin interne</option>
+<option value="Gériatre">Gériatre</option>
+<option value="Médecin rééducateur">Médecin rééducateur</option>
               </select>
             </div>
 
@@ -265,6 +285,7 @@ export class RegisterComponent {
 
     if (this.userType === 'patient') {
       this.registerPatient();
+
     } else {
       this.registerDoctor();
     }
@@ -296,8 +317,9 @@ export class RegisterComponent {
     const doctorData: Partial<Doctor> = {
       ...this.formData,
       ...this.doctorData,
-      role: 'doctor'
+ 
     };
+
 
     this.doctorService.submitRegistrationRequest(doctorData).subscribe({
       next: (response) => {
