@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { AuthService } from './shared/services/auth.service';
@@ -72,6 +72,6 @@ bootstrapApplication(App, {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
-    AuthGuard
+    AuthGuard,DatePipe
   ]
 });

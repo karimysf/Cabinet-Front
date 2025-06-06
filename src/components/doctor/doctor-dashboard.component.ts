@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../shared/services/doctor.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { Doctor, Patient, Consultation } from '../../shared/models/user.model';
-
+import { PatientService } from '../../shared/services/patient.service';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
@@ -83,7 +84,7 @@ import { Doctor, Patient, Consultation } from '../../shared/models/user.model';
             <tbody>
               <tr *ngFor="let consultation of pendingConsultations">
                 <td>{{ consultation.patient?.prenom }} {{ consultation.patient?.nom }}</td>
-                <td>{{ consultation.date | date: 'medium' }}</td>
+                <td>{{ consultation.date ||consultation.date_str }}</td>
                 <td>{{ consultation.description || 'No description provided' }}</td>
                 <td>
                   <button 
@@ -187,7 +188,9 @@ export class DoctorDashboardComponent implements OnInit {
 
   constructor(
     private doctorService: DoctorService,
-    private authService: AuthService
+    private authService: AuthService,
+        private patientService: PatientService // Add this
+
   ) {}
 
   ngOnInit(): void {
@@ -197,7 +200,7 @@ export class DoctorDashboardComponent implements OnInit {
     }
   }
 
-  loadDoctorData(doctorId: string): void {
+   loadDoctorData(doctorId: string): void {
     // Load doctor profile
     this.doctorService.getDoctor(doctorId).subscribe({
       next: (doctor) => {
@@ -211,27 +214,55 @@ export class DoctorDashboardComponent implements OnInit {
     // Load patients
     this.doctorService.getDoctorPatients(doctorId).subscribe({
       next: (patients) => {
-        this.patients = patients;
+        this.patients = patients.patients;
       },
       error: (error) => {
         console.error('Error loading patients:', error);
       }
     });
 
-    // Load all consultations
+    // Load all consultations with patient details
     this.doctorService.getDoctorConsultations(doctorId).subscribe({
-      next: (consultations) => {
-        this.consultations = consultations;
+      next: (consultationsResponse) => {
+        const consultations = consultationsResponse.consultations;
+        
+        // Create an array of observables to get patient details
+        const patientRequests = consultations.map(consultation => 
+          this.patientService.getPatient(consultation.patient_id)
+        );
+
+        // Execute all requests in parallel
+        forkJoin(patientRequests).subscribe(patients => {
+          // Map patient details to consultations
+          this.consultations = consultations.map((consultation, index) => ({
+            ...consultation,
+            patient: patients[index]
+          }));
+        });
       },
       error: (error) => {
         console.error('Error loading consultations:', error);
       }
     });
 
-    // Load pending consultations
+    // Load pending consultations with patient details
     this.doctorService.getPendingConsultations(doctorId).subscribe({
-      next: (pendingConsultations) => {
-        this.pendingConsultations = pendingConsultations;
+      next: (pendingConsultationsResponse) => {
+        const pendingConsultations = pendingConsultationsResponse.consultations;
+        
+        // Create an array of observables to get patient details
+        const patientRequests = pendingConsultations.map(consultation => 
+          this.patientService.getPatient(consultation.patient_id)
+        );
+
+        // Execute all requests in parallel
+        forkJoin(patientRequests).subscribe(patients => {
+          // Map patient details to pending consultations
+          this.pendingConsultations = pendingConsultations.map((consultation, index) => ({
+            ...consultation,
+            patient: patients[index]
+          }));
+        });
       },
       error: (error) => {
         console.error('Error loading pending consultations:', error);

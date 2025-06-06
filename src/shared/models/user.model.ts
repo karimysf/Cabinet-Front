@@ -34,6 +34,7 @@ export interface Consultation {
   description?: string;
   patient?: Patient;
   doctor?: Doctor;
+  date_str: string;
 }
 
 export interface LoginRequest {

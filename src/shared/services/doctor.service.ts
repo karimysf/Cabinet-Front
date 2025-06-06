@@ -43,23 +43,23 @@ export class DoctorService {
   }
 
   getAllDoctors(): Observable<Doctor[]> {
-    return this.http.get<Doctor[]>(`${this.apiUrl}/admin/doctor`);
+    return this.http.get<Doctor[]>(`${this.apiUrl}/admin/doctors`);
   }
 
-  getDoctorPatients(doctorId: string): Observable<Patient[]> {
-    return this.http.get<Patient[]>(`${this.apiUrl}/doctor/${doctorId}/patients`);
+  getDoctorPatients(doctorId: string): Observable<{patients:Patient[];count:number}> {
+    return this.http.get<{patients:Patient[];count:number}>(`${this.apiUrl}/doctor/${doctorId}/patients`);
   }
 
-  getDoctorConsultations(doctorId: string): Observable<Consultation[]> {
-    return this.http.get<Consultation[]>(`${this.apiUrl}/doctor/${doctorId}/consultations`);
+  getDoctorConsultations(doctorId: string): Observable< {consultations: Consultation[]; count: number}> {
+    return this.http.get< {consultations: Consultation[]; count: number}>(`${this.apiUrl}/doctor/${doctorId}/consultations`);
   }
 
-  getPendingConsultations(doctorId: string): Observable<Consultation[]> {
-    return this.http.get<Consultation[]>(`${this.apiUrl}/doctor/${doctorId}/consultations/pending`);
+  getPendingConsultations(doctorId: string): Observable< {consultations: Consultation[]; count: number}> {
+    return this.http.get< {consultations: Consultation[]; count: number}>(`${this.apiUrl}/doctor/${doctorId}/consultations/pending`);
   }
 
   acceptConsultation(doctorId: string, consultationId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/doctor/${doctorId}/consultations/${consultationId}/accept`, {});
+    return this.http.post(`${this.apiUrl}/doctor/${doctorId}/consultations/${consultationId}/accept`,{});
   }
 
   rejectConsultation(doctorId: string, consultationId: string): Observable<any> {

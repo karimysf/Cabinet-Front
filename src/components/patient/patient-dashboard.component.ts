@@ -5,6 +5,7 @@ import { PatientService } from '../../shared/services/patient.service';
 import { DoctorService } from '../../shared/services/doctor.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { Patient, Doctor, Consultation } from '../../shared/models/user.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -120,7 +121,7 @@ import { Patient, Doctor, Consultation } from '../../shared/models/user.model';
             </thead>
             <tbody>
               <tr *ngFor="let consultation of consultations">
-                <td>{{ consultation.date | date: 'medium' }}</td>
+                <td>{{ consultation.date_str | date: 'medium' }}</td>
                 <td>Dr. {{ consultation.doctor?.prenom }} {{ consultation.doctor?.nom }}</td>
                 <td>
                   <span [style.color]="getStatusColor(consultation.etat)">
@@ -162,6 +163,7 @@ export class PatientDashboardComponent implements OnInit {
     private patientService: PatientService,
     private doctorService: DoctorService,
     private authService: AuthService
+    ,private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -184,8 +186,12 @@ export class PatientDashboardComponent implements OnInit {
 
     // Load assigned doctor
     this.patientService.getPatientDoctor(patientId).subscribe({
+      
       next: (doctor) => {
-        this.assignedDoctor = doctor;
+        console.log(doctor)
+
+       if (doctor && doctor._id)
+         this.assignedDoctor=doctor
       },
       error: (error) => {
         console.log('No doctor assigned yet');
@@ -194,8 +200,9 @@ export class PatientDashboardComponent implements OnInit {
 
     // Load consultations
     this.patientService.getPatientConsultations(patientId).subscribe({
-      next: (consultations) => {
-        this.consultations = consultations;
+      next: (response) => {
+        this.consultations = response.consultations;
+        console.log(this.consultations)
       },
       error: (error) => {
         console.error('Error loading consultations:', error);
@@ -237,7 +244,7 @@ export class PatientDashboardComponent implements OnInit {
     
     const consultationData = {
       doctor_id: this.assignedDoctor._id,
-      date: this.newConsultation.date,
+      date: this.datePipe.transform(this.newConsultation.date, 'yyyy-MM-dd HH:mm')??undefined,
       description: this.newConsultation.description
     };
 

@@ -34,8 +34,8 @@ export class PatientService {
     return this.http.get<Patient[]>(`${this.apiUrl}/admin/patient`);
   }
 
-  getPatientConsultations(patientId: string): Observable<Consultation[]> {
-    return this.http.get<Consultation[]>(`${this.apiUrl}/patient/${patientId}/consultations`);
+  getPatientConsultations(patientId: string): Observable< {consultations: Consultation[]; count: number}> {
+    return this.http.get<{consultations: Consultation[]; count: number}>(`${this.apiUrl}/patient/${patientId}/consultations`);
   }
 
   getPatientDoctor(patientId: string): Observable<Doctor> {
@@ -47,6 +47,7 @@ export class PatientService {
   }
 
   createConsultation(patientId: string, consultation: Partial<Consultation>): Observable<any> {
+    console.log(patientId,consultation)
     return this.http.post(`${this.apiUrl}/patient/${patientId}/consultations`, consultation);
   }
 }
