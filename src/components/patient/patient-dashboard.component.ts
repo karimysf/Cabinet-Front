@@ -166,12 +166,12 @@ export class PatientDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
-    if (user && user.id) {
-      this.loadPatientData(user.id);
+    if (user && user._id) {
+      this.loadPatientData(user._id);
     }
   }
 
-  loadPatientData(patientId: number): void {
+  loadPatientData(patientId: string): void {
     // Load patient profile
     this.patientService.getPatient(patientId).subscribe({
       next: (patient) => {
@@ -215,8 +215,8 @@ export class PatientDashboardComponent implements OnInit {
 
   selectDoctor(doctor: Doctor): void {
     const user = this.authService.getCurrentUser();
-    if (user && user.id && doctor.id) {
-      this.patientService.assignDoctorToPatient(user.id, doctor.id).subscribe({
+    if (user && user._id && doctor._id) {
+      this.patientService.assignDoctorToPatient(user._id, doctor._id).subscribe({
         next: () => {
           this.assignedDoctor = doctor;
           this.showDoctorSelection = false;
@@ -231,22 +231,22 @@ export class PatientDashboardComponent implements OnInit {
 
   requestConsultation(): void {
     const user = this.authService.getCurrentUser();
-    if (!user || !user.id || !this.assignedDoctor?.id) return;
+    if (!user || !user._id || !this.assignedDoctor?._id) return;
 
     this.loading = true;
     
     const consultationData = {
-      doctor_id: this.assignedDoctor.id,
+      doctor_id: this.assignedDoctor._id,
       date: this.newConsultation.date,
       description: this.newConsultation.description
     };
 
-    this.patientService.createConsultation(user.id, consultationData).subscribe({
+    this.patientService.createConsultation(user._id, consultationData).subscribe({
       next: () => {
         this.loading = false;
         this.showMessage('Consultation requested successfully!', 'success');
         this.newConsultation = { date: '', description: '' };
-        this.loadPatientData(user.id!);
+        this.loadPatientData(user._id!);
       },
       error: (error) => {
         this.loading = false;

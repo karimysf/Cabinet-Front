@@ -12,38 +12,41 @@ export class PatientService {
   constructor(private http: HttpClient) {}
 
   createPatient(patient: Partial<Patient>): Observable<any> {
-    return this.http.post(`${this.apiUrl}/patient`, patient);
+    const { role, ...patientsansrole } = patient;
+    console.log(patientsansrole)
+
+    return this.http.post(`${this.apiUrl}/patient`, patientsansrole);
   }
 
-  getPatient(patientId: number): Observable<Patient> {
+  getPatient(patientId: string): Observable<Patient> {
     return this.http.get<Patient>(`${this.apiUrl}/patient/${patientId}`);
   }
 
-  updatePatient(patientId: number, patient: Partial<Patient>): Observable<Patient> {
+  updatePatient(patientId: string, patient: Partial<Patient>): Observable<Patient> {
     return this.http.put<Patient>(`${this.apiUrl}/patient/${patientId}`, patient);
   }
 
-  deletePatient(patientId: number): Observable<any> {
+  deletePatient(patientId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/patient/${patientId}`);
   }
 
   getAllPatients(): Observable<Patient[]> {
-    return this.http.get<Patient[]>(`${this.apiUrl}/patient`);
+    return this.http.get<Patient[]>(`${this.apiUrl}/admin/patient`);
   }
 
-  getPatientConsultations(patientId: number): Observable<Consultation[]> {
+  getPatientConsultations(patientId: string): Observable<Consultation[]> {
     return this.http.get<Consultation[]>(`${this.apiUrl}/patient/${patientId}/consultations`);
   }
 
-  getPatientDoctor(patientId: number): Observable<Doctor> {
+  getPatientDoctor(patientId: string): Observable<Doctor> {
     return this.http.get<Doctor>(`${this.apiUrl}/patient/${patientId}/doctor`);
   }
 
-  assignDoctorToPatient(patientId: number, doctorId: number): Observable<any> {
+  assignDoctorToPatient(patientId: string, doctorId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/patient/${patientId}/assign-doctor/${doctorId}`, {});
   }
 
-  createConsultation(patientId: number, consultation: Partial<Consultation>): Observable<any> {
+  createConsultation(patientId: string, consultation: Partial<Consultation>): Observable<any> {
     return this.http.post(`${this.apiUrl}/patient/${patientId}/consultations`, consultation);
   }
 }

@@ -62,14 +62,39 @@ import { Doctor, Patient } from '../../shared/models/user.model';
             <label class="form-label">Specialty</label>
             <select class="form-select" [(ngModel)]="newDoctor.specialite" name="specialite" required>
               <option value="">Select Specialty</option>
-              <option value="Cardiology">Cardiology</option>
-              <option value="Dermatology">Dermatology</option>
-              <option value="Neurology">Neurology</option>
-              <option value="Pediatrics">Pediatrics</option>
-              <option value="Orthopedics">Orthopedics</option>
-              <option value="General Practice">General Practice</option>
-              <option value="Internal Medicine">Internal Medicine</option>
-              <option value="Surgery">Surgery</option>
+              <option value="Généraliste">Généraliste</option>
+<option value="Cardiologue">Cardiologue</option>
+<option value="Pneumologue">Pneumologue</option>
+<option value="Dermatologue">Dermatologue</option>
+<option value="Pédiatre">Pédiatre</option>
+<option value="Neurologue">Neurologue</option>
+<option value="Gastro-entérologue">Gastro-entérologue</option>
+<option value="Endocrinologue">Endocrinologue</option>
+<option value="Rhumatologue">Rhumatologue</option>
+<option value="Ophtalmologue">Ophtalmologue</option>
+<option value="ORL">ORL</option>
+<option value="Gynécologue">Gynécologue</option>
+<option value="Urologue">Urologue</option>
+<option value="Néphrologue">Néphrologue</option>
+<option value="Oncologue">Oncologue</option>
+<option value="Hématologue">Hématologue</option>
+<option value="Chirurgien général">Chirurgien général</option>
+<option value="Chirurgien orthopédiste">Chirurgien orthopédiste</option>
+<option value="Chirurgien cardiaque">Chirurgien cardiaque</option>
+<option value="Chirurgien plastique">Chirurgien plastique</option>
+<option value="Radiologue">Radiologue</option>
+<option value="Anesthésiste">Anesthésiste</option>
+<option value="Médecin du sport">Médecin du sport</option>
+<option value="Médecin du travail">Médecin du travail</option>
+<option value="Psychiatre">Psychiatre</option>
+<option value="Psychologue">Psychologue</option>
+<option value="Médecin urgentiste">Médecin urgentiste</option>
+<option value="Allergologue">Allergologue</option>
+<option value="Infectiologue">Infectiologue</option>
+<option value="Médecin interne">Médecin interne</option>
+<option value="Gériatre">Gériatre</option>
+<option value="Médecin rééducateur">Médecin rééducateur</option>
+  
             </select>
           </div>
           <div class="form-group">
@@ -220,8 +245,7 @@ export class AdminDashboardComponent implements OnInit {
     mot_de_passe: '',
     role: 'doctor'
   };
-
-  constructor(
+ constructor(
     private adminService: AdminService,
     private doctorService: DoctorService,
     private authService: AuthService
@@ -252,21 +276,16 @@ export class AdminDashboardComponent implements OnInit {
       }
     });
 
-    // For demonstration purposes, we'll simulate pending doctor requests
-    // In a real app, this would come from a dedicated endpoint
-    this.pendingDoctorRequests = [
-      {
-        id: 999,
-        nom: 'Johnson',
-        prenom: 'Emily',
-        email: 'emily.johnson@example.com',
-        specialite: 'Cardiology',
-        tel: '+1234567890',
-        role: 'doctor'
+    // Load pending doctor requests
+    this.adminService.getPendingDoctors().subscribe({
+      next: (pendingRequests) => {
+        this.pendingDoctorRequests = pendingRequests;
+      },
+      error: (error) => {
+        console.error('Error loading pending doctor requests:', error);
       }
-    ];
+    });
   }
-
   addDoctor(): void {
     this.loading = true;
     
@@ -284,11 +303,16 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  reviewDoctorApplication(doctor: Doctor, action: 'approve' | 'reject'): void {
+ reviewDoctorApplication(doctor: Doctor, action: 'approve' | 'reject'): void {
     const user = this.authService.getCurrentUser();
-    if (!user || !user.id) return;
-
-    this.adminService.reviewDoctorApplication(user.id, action).subscribe({
+   
+      console.log(user)
+    
+    if (!user || !user._id) return;
+   
+    if (doctor._id !=undefined)
+    {console.log(doctor._id)
+    this.adminService.reviewDoctorApplication(doctor._id, action).subscribe({
       next: () => {
         const actionText = action === 'approve' ? 'approved' : 'rejected';
         this.showMessage(`Doctor application ${actionText} successfully!`, 'success');
@@ -299,22 +323,22 @@ export class AdminDashboardComponent implements OnInit {
         }
         
         // Remove from pending requests
-        this.pendingDoctorRequests = this.pendingDoctorRequests.filter(d => d.id !== doctor.id);
+        this.pendingDoctorRequests = this.pendingDoctorRequests.filter(d => d._id !== doctor._id);
       },
       error: (error) => {
         this.showMessage('Error processing application. Please try again.', 'error');
       }
     });
   }
-
+  }
   deleteDoctor(doctor: Doctor): void {
-    if (!doctor.id) return;
+    if (!doctor._id) return;
     
     if (confirm(`Are you sure you want to remove Dr. ${doctor.prenom} ${doctor.nom}?`)) {
-      this.doctorService.deleteDoctor(doctor.id).subscribe({
+      this.doctorService.deleteDoctor(doctor._id).subscribe({
         next: () => {
           this.showMessage('Doctor removed successfully!', 'success');
-          this.doctors = this.doctors.filter(d => d.id !== doctor.id);
+          this.doctors = this.doctors.filter(d => d._id !== doctor._id);
         },
         error: (error) => {
           this.showMessage('Error removing doctor. Please try again.', 'error');

@@ -87,7 +87,7 @@ export class LoginComponent {
     this.authService.login(this.credentials).subscribe({
       next: (response) => {
         this.loading = false;
-        const user = response.user;
+        const user = response;
         
         // Redirect based on user role
         switch (user.role) {

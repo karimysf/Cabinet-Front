@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { User, LoginRequest, AuthResponse } from '../models/user.model';
+import { User, LoginRequest } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +19,14 @@ export class AuthService {
     }
   }
 
-  login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials)
+  login(credentials: LoginRequest): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(
-        tap(response => {
-          if (response.user) {
-            localStorage.setItem('currentUser', JSON.stringify(response.user));
-            this.currentUserSubject.next(response.user);
+        tap(user => {
+          console.log(user);
+          if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next(user);
           }
         })
       );

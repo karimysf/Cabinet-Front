@@ -16,18 +16,29 @@ export class DoctorService {
   }
 
   addDoctor(doctor: Partial<Doctor>): Observable<any> {
-    return this.http.post(`${this.apiUrl}/doctor`, doctor);
+  
+   const { role, ...doctorWithoutRole } = doctor;
+
+  const payload = {
+    ...doctorWithoutRole,
+    created_at: new Date().toISOString()  // format ISO standard
+  };
+
+  console.log('Doctor sent to backend:', payload);
+
+  return this.http.post(`${this.apiUrl}/doctor`, payload);
   }
 
-  getDoctor(doctorId: number): Observable<Doctor> {
+  getDoctor(doctorId: string): Observable<Doctor> {
+    
     return this.http.get<Doctor>(`${this.apiUrl}/doctor/${doctorId}`);
   }
 
-  updateDoctor(doctorId: number, doctor: Partial<Doctor>): Observable<Doctor> {
+  updateDoctor(doctorId: string, doctor: Partial<Doctor>): Observable<Doctor> {
     return this.http.put<Doctor>(`${this.apiUrl}/doctor/${doctorId}`, doctor);
   }
 
-  deleteDoctor(doctorId: number): Observable<any> {
+  deleteDoctor(doctorId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/doctor/${doctorId}`);
   }
 
@@ -35,23 +46,23 @@ export class DoctorService {
     return this.http.get<Doctor[]>(`${this.apiUrl}/admin/doctor`);
   }
 
-  getDoctorPatients(doctorId: number): Observable<Patient[]> {
+  getDoctorPatients(doctorId: string): Observable<Patient[]> {
     return this.http.get<Patient[]>(`${this.apiUrl}/doctor/${doctorId}/patients`);
   }
 
-  getDoctorConsultations(doctorId: number): Observable<Consultation[]> {
+  getDoctorConsultations(doctorId: string): Observable<Consultation[]> {
     return this.http.get<Consultation[]>(`${this.apiUrl}/doctor/${doctorId}/consultations`);
   }
 
-  getPendingConsultations(doctorId: number): Observable<Consultation[]> {
+  getPendingConsultations(doctorId: string): Observable<Consultation[]> {
     return this.http.get<Consultation[]>(`${this.apiUrl}/doctor/${doctorId}/consultations/pending`);
   }
 
-  acceptConsultation(doctorId: number, consultationId: number): Observable<any> {
+  acceptConsultation(doctorId: string, consultationId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/doctor/${doctorId}/consultations/${consultationId}/accept`, {});
   }
 
-  rejectConsultation(doctorId: number, consultationId: number): Observable<any> {
+  rejectConsultation(doctorId: string, consultationId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/doctor/${doctorId}/consultations/${consultationId}/reject`, {});
   }
 }

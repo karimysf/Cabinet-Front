@@ -1,5 +1,5 @@
 export interface User {
-  id?: number;
+  _id?: string;
   nom: string;
   prenom: string;
   email: string;
@@ -26,9 +26,9 @@ export interface Admin extends User {
 }
 
 export interface Consultation {
-  id?: number;
-  patient_id: number;
-  doctor_id: number;
+  _id?: string;
+  patient_id: string;
+  doctor_id: string;
   date: string;
   etat: 'prévue' | 'demandée' | 'acceptée' | 'rejetée';
   description?: string;

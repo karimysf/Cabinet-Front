@@ -192,12 +192,12 @@ export class DoctorDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
-    if (user && user.id) {
-      this.loadDoctorData(user.id);
+    if (user && user._id) {
+      this.loadDoctorData(user._id);
     }
   }
 
-  loadDoctorData(doctorId: number): void {
+  loadDoctorData(doctorId: string): void {
     // Load doctor profile
     this.doctorService.getDoctor(doctorId).subscribe({
       next: (doctor) => {
@@ -241,9 +241,11 @@ export class DoctorDashboardComponent implements OnInit {
 
   acceptConsultation(consultation: Consultation): void {
     const user = this.authService.getCurrentUser();
-    if (!user || !user.id || !consultation.id) return;
+    if (!user || !user._id
+ || !consultation._id) return;
 
-    this.doctorService.acceptConsultation(user.id, consultation.id).subscribe({
+    this.doctorService.acceptConsultation(user._id
+, consultation._id).subscribe({
       next: () => {
         this.showMessage('Consultation accepted successfully!', 'success');
         this.refreshData();
@@ -256,9 +258,9 @@ export class DoctorDashboardComponent implements OnInit {
 
   rejectConsultation(consultation: Consultation): void {
     const user = this.authService.getCurrentUser();
-    if (!user || !user.id || !consultation.id) return;
+    if (!user || !user._id || !consultation._id) return;
 
-    this.doctorService.rejectConsultation(user.id, consultation.id).subscribe({
+    this.doctorService.rejectConsultation(user._id, consultation._id).subscribe({
       next: () => {
         this.showMessage('Consultation rejected.', 'success');
         this.refreshData();
@@ -271,8 +273,8 @@ export class DoctorDashboardComponent implements OnInit {
 
   refreshData(): void {
     const user = this.authService.getCurrentUser();
-    if (user && user.id) {
-      this.loadDoctorData(user.id);
+    if (user && user._id) {
+      this.loadDoctorData(user._id);
       this.showMessage('Data refreshed successfully!', 'success');
     }
   }
